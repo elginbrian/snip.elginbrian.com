@@ -1,8 +1,6 @@
 module fiber-starter
 
-go 1.22.0
-
-toolchain go1.23.4
+go 1.20
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.6
