@@ -1,35 +1,39 @@
-# Step 1: Build the Go binary
-FROM golang:1.20-alpine as builder
+# Build the application in the golang:1.22-alpine image
+FROM golang:1.20-alpine AS builder
 
-# Set the Current Working Directory inside the container
+# Install git for dependencies
+RUN apk add --no-cache git
+
+# Set the working directory
 WORKDIR /app
 
-# Copy the Go Modules manifests
+# Copy Go module files and download dependencies
 COPY go.mod go.sum ./
+RUN go mod download
 
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
-RUN go mod tidy
+# Copy the vendor directory (after running go mod vendor)
+COPY vendor/ ./vendor/
 
-# Copy the source code into the container
+# Copy the rest of the application code
 COPY . .
 
-# Build the Go app
-RUN go build -o main .
+# Build the Go binary using the vendor directory
+RUN go build -mod=vendor -o /app/fiber-starter ./cmd/main.go
 
-# Step 2: Create a smaller image for running the app
-FROM alpine:latest  
+# Start with a clean Alpine image for the runtime
+FROM alpine:latest
 
-# Install necessary dependencies (e.g., for PostgreSQL client)
-RUN apk --no-cache add ca-certificates
+# Set the working directory for runtime
+WORKDIR /app
 
-# Set the Current Working Directory inside the container
-WORKDIR /root/
+# Copy the built binary from the builder image
+COPY --from=builder /app/fiber-starter /app/fiber-starter
 
-# Copy the Pre-built binary from the builder stage
-COPY --from=builder /app/main .
+# Make the binary executable
+RUN chmod +x /app/fiber-starter
 
-# Expose port (must match the one in the config)
-EXPOSE 8080
+# Expose the application port
+EXPOSE 3000
 
-# Command to run the executable
-CMD ["./main"]
+# Set the entry point for the container to run the application
+CMD ["/app/fiber-starter"]
