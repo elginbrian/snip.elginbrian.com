@@ -81,4 +81,4 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             cd github/snip.elginbrian.com
-            docker exec -it snipelginbriancom_db_1 /bin/sh -c "migrate -path ./db/migrations -database 'postgres://user:password@localhost:5432/url_shortener?sslmode=disable' up"
+            docker exec snipelginbriancom_db_1 /bin/sh -c "migrate -path ./db/migrations -database 'postgres://user:password@localhost:5432/url_shortener?sslmode=disable' up"
