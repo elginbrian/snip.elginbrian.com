@@ -1,6 +1,6 @@
 module fiber-starter
 
-go 1.22.0
+go 1.20
 
 toolchain go1.23.4
 
