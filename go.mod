@@ -2,8 +2,6 @@ module fiber-starter
 
 go 1.20
 
-toolchain go1.23.4
-
 require (
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/golang-migrate/migrate/v4 v4.18.1
